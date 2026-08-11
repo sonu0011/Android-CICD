@@ -1,6 +1,10 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
@@ -33,6 +37,22 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+detekt {
+    buildUponDefaultConfig = true // preconfigure defaults
+    allRules = false // activate all available (even unstable) rules.
+    config.setFrom("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
+    baseline =
+        file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt
+}
+
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "1.8"
+}
+tasks.withType<DetektCreateBaselineTask>().configureEach {
+    jvmTarget = "1.8"
 }
 
 dependencies {
